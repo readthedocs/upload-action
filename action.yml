@@ -1,0 +1,95 @@
+name: "Read the Docs Upload"
+author: "@readthedocs"
+description: "Upload pre-built documentation artifacts to Read the Docs"
+
+branding:
+  color: blue
+  icon: upload-cloud
+
+inputs:
+  token:
+    description: "Read the Docs API token. Store it as a secret."
+    required: true
+  project-slug:
+    description: "Project's slug on Read the Docs."
+    required: true
+  html-dir:
+    description: "Directory containing the built HTML."
+    required: true
+  api-url:
+    description: "Base URL of the Read the Docs instance. Defaults to Read the Docs Community."
+    required: false
+  pdf:
+    description: "Path to the PDF file to upload."
+    required: false
+  epub:
+    description: "Path to the ePub file to upload."
+    required: false
+  htmlzip:
+    description: "Path to the HTML zip file to upload."
+    required: false
+  privacy-level:
+    description: "Privacy level for the version (public or private). Read the Docs for Business only."
+    required: false
+  version-name:
+    description: "Override the inferred branch/tag name or pull request number."
+    required: false
+  version-type:
+    description: "Override the inferred version type: branch, tag, or external."
+    required: false
+  commit:
+    description: "Override the inferred commit hash."
+    required: false
+  verbose:
+    description: "Show debug output."
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: astral-sh/setup-uv@v6
+
+    - name: "Upload documentation to Read the Docs"
+      shell: bash
+      env:
+        # The token is passed through the environment, never as a command line
+        # argument, so it does not appear in process listings or the command echo.
+        READTHEDOCS_TOKEN: ${{ inputs.token }}
+        # Inputs are passed through the environment (not interpolated into the
+        # script) to avoid shell injection from their values.
+        INPUT_API_URL: ${{ inputs.api-url }}
+        INPUT_PROJECT_SLUG: ${{ inputs.project-slug }}
+        INPUT_HTML_DIR: ${{ inputs.html-dir }}
+        INPUT_PDF: ${{ inputs.pdf }}
+        INPUT_EPUB: ${{ inputs.epub }}
+        INPUT_HTMLZIP: ${{ inputs.htmlzip }}
+        INPUT_PRIVACY_LEVEL: ${{ inputs.privacy-level }}
+        INPUT_VERSION_NAME: ${{ inputs.version-name }}
+        INPUT_VERSION_TYPE: ${{ inputs.version-type }}
+        INPUT_COMMIT: ${{ inputs.commit }}
+        INPUT_VERBOSE: ${{ inputs.verbose }}
+      run: |
+        set -euo pipefail
+
+        # readthedocs-cli reference this action runs. Tracks main while we
+        # iterate; pin an exact tag before releasing v1.
+        CLI_REF="main"
+
+        # --api-url and --verbose are options on the `readthedocs` group,
+        # so they go before the `upload` subcommand.
+        args=()
+        [ -n "$INPUT_API_URL" ] && args+=(--api-url "$INPUT_API_URL")
+        [ "$INPUT_VERBOSE" = "true" ] && args+=(--verbose)
+
+        args+=(upload --project-slug "$INPUT_PROJECT_SLUG" --html-dir "$INPUT_HTML_DIR")
+
+        [ -n "$INPUT_PDF" ] && args+=(--pdf "$INPUT_PDF")
+        [ -n "$INPUT_EPUB" ] && args+=(--epub "$INPUT_EPUB")
+        [ -n "$INPUT_HTMLZIP" ] && args+=(--htmlzip "$INPUT_HTMLZIP")
+        [ -n "$INPUT_PRIVACY_LEVEL" ] && args+=(--privacy-level "$INPUT_PRIVACY_LEVEL")
+        [ -n "$INPUT_VERSION_NAME" ] && args+=(--version-name "$INPUT_VERSION_NAME")
+        [ -n "$INPUT_VERSION_TYPE" ] && args+=(--version-type "$INPUT_VERSION_TYPE")
+        [ -n "$INPUT_COMMIT" ] && args+=(--commit "$INPUT_COMMIT")
+
+        uvx --from "git+https://github.com/readthedocs/readthedocs-cli@${CLI_REF}" readthedocs "${args[@]}"

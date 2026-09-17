@@ -13,7 +13,7 @@ inputs:
   project-slug:
     description: "Project's slug on Read the Docs."
     required: true
-  html-dir:
+  html:
     description: "Directory containing the built HTML."
     required: true
   api-url:
@@ -60,7 +60,7 @@ runs:
         # script) to avoid shell injection from their values.
         INPUT_API_URL: ${{ inputs.api-url }}
         INPUT_PROJECT_SLUG: ${{ inputs.project-slug }}
-        INPUT_HTML_DIR: ${{ inputs.html-dir }}
+        INPUT_HTML: ${{ inputs.html }}
         INPUT_PDF: ${{ inputs.pdf }}
         INPUT_EPUB: ${{ inputs.epub }}
         INPUT_HTMLZIP: ${{ inputs.htmlzip }}
@@ -82,7 +82,7 @@ runs:
         [ -n "$INPUT_API_URL" ] && args+=(--api-url "$INPUT_API_URL")
         [ "$INPUT_VERBOSE" = "true" ] && args+=(--verbose)
 
-        args+=(upload --project-slug "$INPUT_PROJECT_SLUG" --html-dir "$INPUT_HTML_DIR")
+        args+=(upload --project-slug "$INPUT_PROJECT_SLUG" --html "$INPUT_HTML")
 
         [ -n "$INPUT_PDF" ] && args+=(--pdf "$INPUT_PDF")
         [ -n "$INPUT_EPUB" ] && args+=(--epub "$INPUT_EPUB")

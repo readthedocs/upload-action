@@ -9,7 +9,7 @@ Build your documentation with whatever tool you use, then hand the output to thi
   with:
     token: ${{ secrets.READTHEDOCS_TOKEN }}
     project-slug: my-project
-    html-dir: _build/html
+    html: _build/html
 ```
 
 ## Inputs
@@ -18,7 +18,7 @@ Build your documentation with whatever tool you use, then hand the output to thi
 |---|---|---|
 | `token` | yes | Read the Docs API token. Store it as a repository secret. |
 | `project-slug` | yes | Project's slug on Read the Docs. |
-| `html-dir` | yes | Directory containing the built HTML. |
+| `html` | yes | Directory containing the built HTML. |
 | `api-url` | no | Base URL of the Read the Docs instance. Defaults to Read the Docs Community. |
 | `pdf` | no | Path to the PDF file to upload. |
 | `epub` | no | Path to the ePub file to upload. |
@@ -59,7 +59,7 @@ jobs:
         with:
           token: ${{ secrets.READTHEDOCS_TOKEN }}
           project-slug: my-project
-          html-dir: _build/html
+          html: _build/html
 ```
 
 Also upload downloadable formats by pointing at each file:
@@ -69,7 +69,7 @@ Also upload downloadable formats by pointing at each file:
         with:
           token: ${{ secrets.READTHEDOCS_TOKEN }}
           project-slug: my-project
-          html-dir: _build/html
+          html: _build/html
           pdf: _build/latex/my-project.pdf
           epub: _build/epub/my-project.epub
 ```
@@ -86,7 +86,7 @@ A project that does not build with Python. The upload step still needs no interp
         with:
           token: ${{ secrets.READTHEDOCS_TOKEN }}
           project-slug: my-project
-          html-dir: dist
+          html: dist
 ```
 
 ## Pull requests from forks

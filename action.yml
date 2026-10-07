@@ -48,7 +48,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: astral-sh/setup-uv@v6
+    - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
 
     - name: "Upload documentation to Read the Docs"
       shell: bash
@@ -72,9 +72,8 @@ runs:
       run: |
         set -euo pipefail
 
-        # readthedocs-cli reference this action runs. Tracks main while we
-        # iterate; pin an exact tag before releasing v1.
-        CLI_REF="main"
+        # Exact readthedocs-upload release from PyPI this action runs.
+        CLI_VERSION="1.0.0a1"
 
         # --api-url and --verbose are options on the `readthedocs` group,
         # so they go before the `upload` subcommand.
@@ -92,4 +91,4 @@ runs:
         [ -n "$INPUT_VERSION_TYPE" ] && args+=(--version-type "$INPUT_VERSION_TYPE")
         [ -n "$INPUT_COMMIT" ] && args+=(--commit "$INPUT_COMMIT")
 
-        uvx --from "git+https://github.com/readthedocs/readthedocs-cli@${CLI_REF}" readthedocs "${args[@]}"
+        uvx --from "readthedocs-upload==${CLI_VERSION}" readthedocs "${args[@]}"

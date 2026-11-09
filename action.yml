@@ -11,13 +11,13 @@ inputs:
     description: "Read the Docs API token. Store it as a secret."
     required: true
   project-slug:
-    description: "Project's slug on Read the Docs."
-    required: true
+    description: "Project's slug on Read the Docs. Required unless using a project token."
+    required: false
   html:
     description: "Directory containing the built HTML."
     required: true
   api-url:
-    description: "Base URL of the Read the Docs instance. Defaults to Read the Docs Community."
+    description: "Base URL of the Read the Docs instance. Inferred from API tokens (rtdcommunity_ or rtdbusiness_ prefix) when omitted, otherwise defaults to Read the Docs Community."
     required: false
   pdf:
     description: "Path to the PDF file to upload."
@@ -82,7 +82,10 @@ runs:
         [ -n "$INPUT_API_URL" ] && args+=(--api-url "$INPUT_API_URL")
         [ "$INPUT_VERBOSE" = "true" ] && args+=(--verbose)
 
-        args+=(upload --project-slug "$INPUT_PROJECT_SLUG" --html "$INPUT_HTML")
+        args+=(upload --html "$INPUT_HTML")
+
+        # The project is inferred from project tokens, so the slug is optional.
+        [ -n "$INPUT_PROJECT_SLUG" ] && args+=(--project-slug "$INPUT_PROJECT_SLUG")
 
         [ -n "$INPUT_PDF" ] && args+=(--pdf "$INPUT_PDF")
         [ -n "$INPUT_EPUB" ] && args+=(--epub "$INPUT_EPUB")

@@ -115,17 +115,14 @@ GitHub does not expose secrets to workflows triggered by pull requests from fork
 
 ## Versioning
 
-Releases follow semantic versioning and are tagged `vX.Y.Z`. Pin to the full commit hash of a release and note the version in a comment, as [GitHub recommends](https://docs.github.com/en/actions/reference/security/secure-use#using-third-party-actions). Dependabot keeps the pin up to date like any other action:
-
-```yaml
-- uses: readthedocs/upload-action@<commit hash>  # v1.0.0
-```
-
-The `v1` tag moves to the latest `v1.x.y` release, so pinning to it gets fixes automatically at the cost of running code you did not review:
+Pin to the major version so you get fixes automatically:
 
 ```yaml
 - uses: readthedocs/upload-action@v1
 ```
+
+You can pin to the full commit hash of a release and note the version in a comment, as [GitHub recommends](https://docs.github.com/en/actions/reference/security/secure-use#using-third-party-actions), if you prefer.
+
 
 The action itself follows the same standard: the actions it uses are pinned to a commit hash, and it runs an exact [readthedocs-upload](https://pypi.org/project/readthedocs-upload/) release from PyPI. The pinned version is in `action.yml`, and the [changelog](./CHANGELOG.md) lists which one each release ships.
 

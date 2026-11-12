@@ -17,9 +17,9 @@ Build your documentation with whatever tool you use, then hand the output to thi
 | Input | Required | Description |
 |---|---|---|
 | `token` | yes | Read the Docs API token. Store it as a repository secret. |
-| `project-slug` | yes | Project's slug on Read the Docs. |
+| `project-slug` | no | Project's slug on Read the Docs. Required unless using a project token. |
 | `html` | yes | Directory containing the built HTML. |
-| `api-url` | no | Base URL of the Read the Docs instance. Defaults to Read the Docs Community. |
+| `api-url` | no | Base URL of the Read the Docs instance. Inferred from API tokens (`rtdcommunity_` or `rtdbusiness_` prefix) when omitted, otherwise defaults to Read the Docs Community. |
 | `pdf` | no | Path to the PDF file to upload. |
 | `epub` | no | Path to the ePub file to upload. |
 | `htmlzip` | no | Path to the HTML zip file to upload. |
@@ -28,6 +28,26 @@ Build your documentation with whatever tool you use, then hand the output to thi
 | `version-type` | no | Override the inferred version type: `branch`, `tag`, or `external`. |
 | `commit` | no | Override the inferred commit hash. |
 | `verbose` | no | Show debug output. Defaults to `false`. |
+
+### API tokens
+
+With a project token, the project and the Read the Docs platform are inferred from the token, so `project-slug` and `api-url` can be omitted:
+
+```yaml
+- uses: readthedocs/upload-action@v1
+  with:
+    token: ${{ secrets.READTHEDOCS_TOKEN }}
+    html: _build/html
+```
+
+Tokens starting with `rtdcommunity_` upload to Read the Docs Community (`https://app.readthedocs.org`),
+and tokens starting with `rtdbusiness_` upload to Read the Docs for Business (`https://app.readthedocs.com`).
+The platform is inferred from tokens of any scope, but only project tokens infer the project, `project-slug` is required with other tokens.
+`project-slug` and `api-url` still take precedence when given.
+
+User tokens don't carry this information, `project-slug` is required and `api-url` defaults to `https://app.readthedocs.org` when using one.
+
+### Version metadata
 
 The version name, type, and commit are inferred from the workflow event, including the correct head commit for pull requests. Set the overrides only when you need to.
 

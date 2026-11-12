@@ -68,8 +68,8 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: '3.13'
       - run: pip install -r docs/requirements.txt
@@ -97,7 +97,7 @@ Also upload downloadable formats by pointing at each file:
 A project that does not build with Python. The upload step still needs no interpreter setup of its own:
 
 ```yaml
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
         with:
           node-version: '22'
       - run: npm ci && npm run build
@@ -121,7 +121,10 @@ Pin to the major version so you get fixes automatically:
 - uses: readthedocs/upload-action@v1
 ```
 
-Dependabot can keep the pin up to date like any other action.
+You can pin to the full commit hash of a release and note the version in a comment, as [GitHub recommends](https://docs.github.com/en/actions/reference/security/secure-use#using-third-party-actions), if you prefer.
+
+
+The action itself follows the same standard: the actions it uses are pinned to a commit hash, and it runs an exact [readthedocs-upload](https://pypi.org/project/readthedocs-upload/) release from PyPI. The pinned version is in `action.yml`, and the [changelog](./CHANGELOG.md) lists which one each release ships.
 
 ## License
 
